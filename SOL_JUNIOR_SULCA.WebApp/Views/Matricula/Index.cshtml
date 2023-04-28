@@ -1,0 +1,118 @@
+﻿@model List<Matricula>
+@{
+    ViewBag.Title = "Matriculas";
+
+    string mensaje = TempData["Mensaje"]?.ToString();
+    string error = TempData["Error"]?.ToString();
+}
+
+<h2>Lista de Matriculas</h2>
+
+<div class="row">
+    <div class="col-md-12 text-center">
+        <a href="/Matricula/Nuevo" class="btn btn-warning">Nuevo</a>
+        <hr />
+    </div>
+
+    @if (error != null)
+    {
+        ViewBag.Message = error;
+        <div class="col-md-12">
+            @{ Html.RenderPartial("_Error");}
+        </div>
+    }
+
+    @if (mensaje != null)
+    {
+        <div class="col-md-12">
+            <div class="alert alert-success alert-dismissible">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                <h4> Información!</h4>
+                <label>@mensaje</label>
+            </div>
+        </div>
+    }
+
+    <div class="col-md-12">
+        <div class="table-responsive">
+            <table class="table table-condensed table-bordered table-hover">
+                <thead>
+                    <tr class="bg-primary text-center">
+                        <th width="80"></th>
+                        <th width="40">#</th>
+                        <th width="120">CODIGO</th>
+                        <th>NOMBRE</th>
+                        <th>APELLIDO</th>
+                        <th width="100">TIPO MATRÍCULA</th>
+                        <th width="120">FECHA MATRÍCULA</th>
+                        <th width="120">FECHA ANULACIÓN</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Count > 0)
+                    {
+                        int i = 0;
+                        foreach (Matricula item in Model)
+                        {
+                            <tr>
+                                <td class="text-center">
+                                    @if (item.Estado == EstadoMatricula.ACTIVO)
+                                    {
+                                        <a href="javascript:index.Anular(@item.Id)" class="text-danger">ANULAR</a>
+                                    }
+                                </td>
+                                <td class="text-right">@(++i)</td>
+                                <td class="text-center">@item.Codigo</td>
+                                <td>@item.Nombre</td>
+                                <td>@item.Apellido</td>
+
+                                <td class="text-center">@item.Tipo</td>
+                                <td>@item.Registro.ToString("dd/MM/yyyy HH:mm")</td>
+                                <td>@(item.Anulacion?.ToString("dd/MM/yyyy HH:mm"))</td>
+                            </tr>
+
+                            if (item.Secciones != null)
+                            {
+                                <tr>
+                                    <td colspan="2"></td>
+                                    <td colspan="6">
+                                        <label>Cursos:</label>
+                                        <ul>
+                                            @foreach (MatriculaSeccion item2 in item.Secciones)
+                                            {
+                                                <li>@item2.Seccion.Curso.Descripcion | @item2.Seccion.Descripcion</li>
+
+                                            }
+                                        </ul>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="8" class="text-center">NO EXISTE REGISTROS</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+
+
+@section scripts
+{
+    <script>
+        var index = {
+            Anular: (id) => {
+                if (confirm('¿Esta seguro de anular la matricula?')) {
+                    location.href = '/Matricula/Anular/' + id
+                }
+            }
+        }
+    </script>
+}

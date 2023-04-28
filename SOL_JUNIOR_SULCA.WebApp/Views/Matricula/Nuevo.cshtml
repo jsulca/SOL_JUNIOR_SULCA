@@ -1,0 +1,153 @@
+﻿@model Matricula
+@{
+    ViewBag.Title = "Nueva Matricula";
+
+    List<Seccion> secciones = ViewBag.Secciones;
+}
+
+<h2>Nueva Matricula</h2>
+
+<div class="row">
+    <div class="col-sm-4 col-xs-12">
+        <label class="control-label">Tipo de Matricula:</label>
+        @Html.EnumDropDownListFor(m => m.Tipo, new { @class = "form-control" })
+    </div>
+    <div class="col-sm-4 col-xs-6">
+        <label class="control-label">Codigo: <span class="text-danger">(*)</span></label>
+        @Html.TextBoxFor(m => m.Codigo, new { @class = "form-control" })
+    </div>
+    <div class="col-sm-4 col-xs-6">
+        <label class="control-label">Nro. Documento: <span class="text-danger">(*)</span></label>
+        @Html.TextBoxFor(m => m.NroDocumento, new { @class = "form-control" })
+    </div>
+    <div class="col-sm-6 col-xs-12">
+        <label class="control-label">Nombre: <span class="text-danger">(*)</span></label>
+        @Html.TextBoxFor(m => m.Nombre, new { @class = "form-control" })
+    </div>
+    <div class="col-sm-6 col-xs-12">
+        <label class="control-label">Apellido: <span class="text-danger">(*)</span></label>
+        @Html.TextBoxFor(m => m.Apellido, new { @class = "form-control" })
+    </div>
+
+    <div class="col-sm-12 col-xs-12" id="mensajes"></div>  
+</div>
+
+<hr />
+
+<div class="row">
+    <div class="col-md-12 text-center">
+        <button type="button" class="btn btn-success" id="btnGuardar">Guardar</button>
+        <a href="/Matricula/Index" class="btn btn-danger">Cancelar</a>
+    </div>
+</div>
+
+<hr />
+
+<h2>Cursos</h2>
+<div class="row">
+    <div class="col-md-12">
+        <label class="control-label">Cursos: </label>
+        <div class="input-group">
+            <select class="form-control" id="Seccion">
+                @foreach (Seccion item in secciones)
+                {
+                    <option value="@item.Id" data-cursoid="@item.CursoId">[Creditos: @item.Curso.Credito] @item.Descripcion - @item.Curso.Descripcion</option>
+                }
+            </select>
+            <div class="input-group-btn">
+                <button type="button" class="btn btn-info" id="btnAgregarCurso">Agregar Curso</button>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-12">
+        <br />
+        <div class="table-responsive">
+            <table id="tblCursos" class="table table-bordered table-condensed table-hover">
+                <thead>
+                    <tr class="bg-info">
+                        <th width="100"></th>
+                        <th>CURSO</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+@section scripts {
+
+    <script>
+
+        var nuevo = {
+            ObtenerModelo: () => {
+                var model = {
+                    'tipo': $('#Tipo').val(),
+                    'codigo': $('#Codigo').val(),
+                    'nroDocumento': $('#NroDocumento').val(),
+                    'nombre': $('#Nombre').val(),
+                    'apellido': $('#Apellido').val(),
+                }
+
+                $.each($('#tblCursos tbody tr'), function (i, tr) {
+                    model[`secciones[${i}]`] = tr.dataset.seccionid
+                })
+
+                return model
+            }
+        }
+
+        $(function () {
+            $('#btnAgregarCurso').click(function () {
+                var seccionId = $('#Seccion').val()
+                var cursoId = $('#Seccion option:selected').data('cursoid')
+                var seccion = $('#Seccion option:selected').text()
+
+                if ($(`#tblCursos tbody tr[data-cursoid="${cursoId}"]`).length > 0) {
+                    alert('Ya tiene el curso asignado.')
+                    return
+                }
+
+                var tr = `<tr data-seccionid="${seccionId}" data-cursoid="${cursoId}">
+                                    <td class="text-center">
+                                        <a href="javascript:void(0)" class="text-danger eliminar">Quitar</a>
+                                    </td>
+                                    <td>${seccion}</td>
+                            </tr>`
+
+                $('#tblCursos tbody').append(tr)
+            })
+
+            $('#tblCursos tbody').delegate('a.eliminar', 'click', function () {
+                $(this).parents().eq(1).remove()
+            })
+
+            $('#btnGuardar').click(function () {
+                if (confirm('¿Esta seguro de guardar el registro?')) {
+                    var model = nuevo.ObtenerModelo()
+
+                    $.ajax({
+                        type: 'POST',
+                        url: '/Matricula/Nuevo',
+                        data: model,
+                        beforeSend: () => {
+                            $('#btnGuardar').attr('disabled', 'disabled')
+                            $('#mensajes').html('')
+                        },
+                        complete: () => {
+                            $('#btnGuardar').removeAttr('disabled')
+                        },
+                        success: ({ mensaje }) => {
+                            alert(mensaje)
+                            location.href = "/Matricula/Index";
+                        },
+                        error: (data) => {
+                            $('#mensajes').html(data.responseText)
+                        }
+                    })
+                }
+            })
+        })
+    </script>
+}
