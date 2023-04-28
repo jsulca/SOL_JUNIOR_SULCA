@@ -3,6 +3,6 @@
     public enum TipoMatricula
     {
         PRESENCIAL,
-        DISTANCAI
+        DISTANCIA
     }
 }
