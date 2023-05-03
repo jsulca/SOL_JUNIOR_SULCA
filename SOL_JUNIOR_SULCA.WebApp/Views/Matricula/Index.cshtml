@@ -38,17 +38,27 @@
             <table class="table table-condensed table-bordered table-hover">
                 <thead>
                     <tr class="bg-primary text-center">
-                        <th width="80"></th>
-                        <th width="40">#</th>
-                        <th width="120">CODIGO</th>
-                        <th>NOMBRE</th>
-                        <th>APELLIDO</th>
-                        <th width="100">TIPO MATRÍCULA</th>
-                        <th width="120">FECHA MATRÍCULA</th>
-                        <th width="120">FECHA ANULACIÓN</th>
+                        <th width="80" rowspan="2"></th>
+                        <th width="40" rowspan="2">#</th>
+                        <th width="100" rowspan="2">ID MATRICULA</th>
+                        <th colspan="3">ALUMNO</th>
+                        <th colspan="3">CURSO</th>
+                        <th rowspan="2">SECCION</th>
+                        <th width="100" rowspan="2">TIPO MATRÍCULA</th>
+                        <th width="120" rowspan="2">FECHA MATRÍCULA</th>
+                        <th width="120" rowspan="2">FECHA ANULACIÓN</th>
+                    </tr>
+                    <tr class="bg-primary text-center">
+                        <th width="120">CÓDIGO</th>
+                        <th>NOMBRES</th>
+                        <th>APELLIDOS</th>
+
+                        <th width="100">ID</th>
+                        <th>DESCRIPCIÓN</th>
+                        <th width="80">CREDITOS</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody class="nowrap">
                     @if (Model.Count > 0)
                     {
                         int i = 0;
@@ -62,37 +72,29 @@
                                     }
                                 </td>
                                 <td class="text-right">@(++i)</td>
-                                <td class="text-center">@item.Codigo</td>
-                                <td>@item.Nombre</td>
-                                <td>@item.Apellido</td>
+                                <td class="text-center">@item.Id</td>
+
+                                <td class="text-center">@item.Alumno.Codigo</td>
+                                <td>@item.Alumno.Nombre</td>
+                                <td>@item.Alumno.Apellido</td>
+
+                                <td class="text-center">@item.Seccion.Curso.Id</td>
+                                <td>@item.Seccion.Curso.Descripcion</td>
+                                <td class="text-right">@item.Seccion.Curso.Credito</td>
+
+                                <td class="text-center">@item.Seccion.Descripcion</td>
 
                                 <td class="text-center">@item.Tipo</td>
                                 <td>@item.Registro.ToString("dd/MM/yyyy HH:mm")</td>
                                 <td>@(item.Anulacion?.ToString("dd/MM/yyyy HH:mm"))</td>
                             </tr>
 
-                            if (item.Secciones != null)
-                            {
-                                <tr>
-                                    <td colspan="2"></td>
-                                    <td colspan="6">
-                                        <label>Cursos:</label>
-                                        <ul>
-                                            @foreach (MatriculaSeccion item2 in item.Secciones)
-                                            {
-                                                <li>@item2.Seccion.Curso.Descripcion | @item2.Seccion.Descripcion</li>
-
-                                            }
-                                        </ul>
-                                    </td>
-                                </tr>
-                            }
                         }
                     }
                     else
                     {
                         <tr>
-                            <td colspan="8" class="text-center">NO EXISTE REGISTROS</td>
+                            <td colspan="13" class="text-center">NO EXISTE REGISTROS</td>
                         </tr>
                     }
                 </tbody>

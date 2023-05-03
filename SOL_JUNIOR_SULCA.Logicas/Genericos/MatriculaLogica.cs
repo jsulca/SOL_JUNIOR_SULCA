@@ -14,7 +14,6 @@ namespace SOL_JUNIOR_SULCA.Logicas.Genericos
         private DataBaseContexto _contexto;
         private MatriculaRepositorio _matriculaRepositorio;
         private SeccionRepositorio _seccionRepositorio;
-        private MatriculaSeccionRepositorio _matriculaSeccionRepositorio;
 
         private const int MAXIMO_CREDITOS = 5;
 
@@ -23,16 +22,11 @@ namespace SOL_JUNIOR_SULCA.Logicas.Genericos
             using (_contexto = new DataBaseContexto())
             {
                 _matriculaRepositorio = new MatriculaRepositorio(_contexto);
-                _matriculaSeccionRepositorio = new MatriculaSeccionRepositorio(_contexto);
                 List<Matricula> lista = _matriculaRepositorio.Listar(filtro);
 
                 if (lista.Count > 0 && conDetalles)
                 {
                     int[] matriculaIds = lista.Select(x => x.Id).ToArray();
-                    List<MatriculaSeccion> secciones = _matriculaSeccionRepositorio.Listar(new MatriculaSeccionFiltro { MatriculaIds = matriculaIds });
-
-                    foreach (Matricula item in lista)
-                        item.Secciones = secciones.Where(x => x.MatriculaId == item.Id).ToList();
                 }
 
                 return lista;
@@ -40,7 +34,7 @@ namespace SOL_JUNIOR_SULCA.Logicas.Genericos
         }
 
         public bool SePuedeAnular(int id)
-        { 
+        {
             using (_contexto = new DataBaseContexto())
             {
                 _matriculaRepositorio = new MatriculaRepositorio(_contexto);
@@ -53,37 +47,36 @@ namespace SOL_JUNIOR_SULCA.Logicas.Genericos
             using (_contexto = new DataBaseContexto())
             {
                 _matriculaRepositorio = new MatriculaRepositorio(_contexto);
-                _matriculaSeccionRepositorio = new MatriculaSeccionRepositorio(_contexto);
                 _seccionRepositorio = new SeccionRepositorio(_contexto);
 
-                int[] seccionIds = entidad.Secciones.Select(x => x.SeccionId).ToArray();
-                List<Seccion> secciones = _seccionRepositorio.Listar(new SeccionFiltro { Ids = seccionIds });
+                List<Matricula> matriculas = _matriculaRepositorio.Listar(new MatriculaFiltro { AlumnoId = entidad.AlumnoId, Estado = EstadoMatricula.ACTIVO });
+                Seccion seccion = _seccionRepositorio.BuscarPorId(entidad.SeccionId);
+
+                #region Validacion de Curso Repetido
+
+                if (matriculas.Where(x => x.Seccion.CursoId == seccion.CursoId).Count() > 0)
+                    throw new Exception($"El alumno ya se encuentra matriculado en el curso {seccion.Curso.Descripcion}.");
+
+                #endregion
 
                 #region Validacion de Creditos
 
-                int creditos = secciones.Sum(x => x.Curso.Credito);
-                if (creditos > MAXIMO_CREDITOS) throw new Exception("El alumno sobrepasa los 5 creditos.");
+                int creditos = matriculas.Sum(x => x.Seccion.Curso.Credito);
+                if (creditos >= MAXIMO_CREDITOS) throw new Exception($"El alumno sobrepasa los {MAXIMO_CREDITOS} creditos.");
 
                 #endregion
 
                 #region Validacion de Vacantes
 
-                List<string> seccionSinVacante = new List<string>();
-                foreach (Seccion item in secciones)
-                {
-                    if (item.VacanteUsada >= item.Vacante) seccionSinVacante.Add(item.Descripcion);
-                }
-
-                if (seccionSinVacante.Count > 0) throw new Exception($"El alumno no puede matricularse es la siguientes secciones: {string.Join(",", seccionSinVacante)}.");
+                if (seccion.Disponible == 0)
+                    throw new Exception($"El alumno no puede matricularse en la sección: {seccion.Descripcion}, por que no tiene vacantes libres.");
 
                 #endregion
 
-                #region Actualizar Vacantes de secciones
+                #region Actualizar Vacantes de la seccion
 
-                foreach (Seccion item in secciones)
-                    item.VacanteUsada++;
-
-                _seccionRepositorio.Update(secciones);
+                seccion.Matriculado++;
+                _seccionRepositorio.Update(seccion);
 
                 #endregion
 
@@ -94,7 +87,6 @@ namespace SOL_JUNIOR_SULCA.Logicas.Genericos
 
                 _matriculaRepositorio.Save(entidad);
 
-                _matriculaSeccionRepositorio.Save(entidad.Secciones);
 
                 #endregion
 
@@ -107,7 +99,6 @@ namespace SOL_JUNIOR_SULCA.Logicas.Genericos
             using (_contexto = new DataBaseContexto())
             {
                 _matriculaRepositorio = new MatriculaRepositorio(_contexto);
-                _matriculaSeccionRepositorio = new MatriculaSeccionRepositorio(_contexto);
                 _seccionRepositorio = new SeccionRepositorio(_contexto);
 
                 Matricula _ = _matriculaRepositorio.GetOne(x => x.Id == entidad.Id && x.Estado == EstadoMatricula.ACTIVO);
@@ -121,17 +112,11 @@ namespace SOL_JUNIOR_SULCA.Logicas.Genericos
 
                     #endregion
 
-                    List<MatriculaSeccion> matriculaSecciones = _matriculaSeccionRepositorio.GetAllBy(x => x.MatriculaId == entidad.Id);
-                    int[] seccionIds = matriculaSecciones.Select(x => x.SeccionId).ToArray();
+                    #region Actualizar La vacante de la sección
 
-                    List<Seccion> secciones = _seccionRepositorio.Listar(new SeccionFiltro { Ids = seccionIds });
-
-                    #region Actualizar Vacantes de secciones
-
-                    foreach (Seccion item in secciones)
-                        item.VacanteUsada--;
-
-                    _seccionRepositorio.Update(secciones);
+                    Seccion seccion = _seccionRepositorio.GetOne(x => x.Id == _.SeccionId);
+                    seccion.Matriculado--;
+                    _seccionRepositorio.Update(seccion);
 
                     #endregion
 

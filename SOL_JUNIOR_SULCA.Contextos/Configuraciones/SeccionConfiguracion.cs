@@ -15,7 +15,7 @@ namespace SOL_JUNIOR_SULCA.Contextos.Configuraciones
             
             entityType.Property(x => x.Descripcion).HasColumnName("DESCRIPCION");
             entityType.Property(x => x.Vacante).HasColumnName("VACANTE");
-            entityType.Property(x => x.VacanteUsada).HasColumnName("VACANTEUSADA");
+            entityType.Property(x => x.Matriculado).HasColumnName("MATRICULADO");
             entityType.Property(x => x.Estado).HasColumnName("ESTADO");
 
             entityType.HasRequired(x => x.Curso).WithMany(x => x.Secciones);

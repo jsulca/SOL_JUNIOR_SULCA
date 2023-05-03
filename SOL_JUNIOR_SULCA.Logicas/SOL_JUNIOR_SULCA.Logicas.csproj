@@ -54,6 +54,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Genericos\AlumnoLogica.cs" />
     <Compile Include="Genericos\SeccionLogica.cs" />
     <Compile Include="Genericos\CursoLogica.cs" />
     <Compile Include="Genericos\MatriculaLogica.cs" />

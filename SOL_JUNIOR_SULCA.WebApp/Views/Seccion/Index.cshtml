@@ -1,0 +1,63 @@
+﻿@model List<Seccion>
+@{
+    ViewBag.Title = "Secciones";
+
+}
+
+<h2>Lista de Secciones</h2>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="table-responsive">
+            <table class="table table-condensed table-bordered table-hover">
+                <thead>
+                    <tr class="bg-primary text-center">
+                    </tr>
+                    <tr class="bg-primary text-center">
+                        <th width="40">#</th>
+                        <th width="120">ID</th>
+                        <th>DESCRIPCIÓN</th>
+
+                        <th width="100">CURSO</th>
+                        <th width="100">CREDITO</th>
+
+                        <th width="100">VACANTES</th>
+                        <th width="100">MATRICULADOS</th>
+                        <th width="100">DISPONIBLES</th>
+                        <th width="100">ESTADO</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Count > 0)
+                    {
+                        int i = 0;
+                        foreach (Seccion item in Model)
+                        {
+                            <tr class="@(item.Disponible == 0 ? "bg-success" : string.Empty)">
+                                <td class="text-right">@(++i)</td>
+                                <td class="text-center">@item.Id</td>
+                                <td>@item.Descripcion</td>
+
+                                <td>@item.Curso.Descripcion</td>
+                                <td class="text-center">@item.Curso.Credito</td>
+
+
+                                <td class="text-center">@item.Vacante</td>
+                                <td class="text-center">@item.Matriculado</td>
+                                <td class="text-center">@item.Disponible</td>
+                                <td class="text-center">@item.Estado</td>
+                            </tr>
+
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="8" class="text-center">NO EXISTE REGISTROS</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

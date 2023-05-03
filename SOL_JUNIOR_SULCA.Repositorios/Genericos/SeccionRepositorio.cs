@@ -14,6 +14,8 @@ namespace SOL_JUNIOR_SULCA.Repositorios
 
         public List<Seccion> Listar(SeccionFiltro filtro) => QueryListar(filtro).ToList();
 
+        public Seccion BuscarPorId(int id) => QueryListar(new SeccionFiltro { Id = id }).SingleOrDefault();
+
         #region Metodos
 
         private IQueryable<Seccion> QueryListar(SeccionFiltro filtro)
@@ -22,8 +24,9 @@ namespace SOL_JUNIOR_SULCA.Repositorios
 
             if (filtro != null)
             {
+                if(filtro.Id.HasValue) source = source.Where(x => x.Id == filtro.Id);
                 if (filtro.Ids != null && filtro.Ids.Length > 0) source = source.Where(x => filtro.Ids.Contains(x.Id));
-                if (filtro.ConVacantes) source = source.Where(x => x.VacanteUsada < x.Vacante);
+                if (filtro.ConVacantes) source = source.Where(x => x.Matriculado < x.Vacante);
             }
 
             return source;

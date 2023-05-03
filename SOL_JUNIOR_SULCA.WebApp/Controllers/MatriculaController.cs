@@ -12,11 +12,13 @@ namespace SOL_JUNIOR_SULCA.WebApp.Controllers
     {
         private readonly MatriculaLogica _matriculaLogica;
         private readonly SeccionLogica _seccionLogica;
+        private readonly AlumnoLogica _alumnoLogica;
 
         public MatriculaController()
         {
             _matriculaLogica = new MatriculaLogica();
             _seccionLogica = new SeccionLogica();
+            _alumnoLogica = new AlumnoLogica();
         }
 
         public ActionResult Index()
@@ -30,7 +32,10 @@ namespace SOL_JUNIOR_SULCA.WebApp.Controllers
             Matricula _ = new Matricula();
 
             List<Seccion> secciones = _seccionLogica.Listar(new SeccionFiltro { ConVacantes = true });
+            List<Alumno> alumnos = _alumnoLogica.Listar(new AlumnoFiltro { Estado = Entidades.Constantes.EstadoAlumno.ACTIVO });
+
             ViewBag.Secciones = secciones;
+            ViewBag.Alumnos = alumnos;
 
             return View(_);
         }
@@ -87,12 +92,6 @@ namespace SOL_JUNIOR_SULCA.WebApp.Controllers
         {
             ModelState.Clear();
             if (!entidad.Tipo.HasValue) ModelState.AddModelError("Tipo", "Es necesario seleccionar un tipo.");
-            if (string.IsNullOrEmpty(entidad.Codigo)) ModelState.AddModelError("Codigo", "Es necesario ingresar el código.");
-            if (string.IsNullOrEmpty(entidad.NroDocumento)) ModelState.AddModelError("NroDocumento", "Es necesario ingresar el nro documento.");
-            if (string.IsNullOrEmpty(entidad.Nombre)) ModelState.AddModelError("Nombre", "Es necesario ingresar el nombre.");
-            if (string.IsNullOrEmpty(entidad.Apellido)) ModelState.AddModelError("Apellido", "Es necesario ingresar el apellido.");
-
-            if (entidad.Secciones == null || entidad.Secciones.Length == 0) ModelState.AddModelError("Secciones", "Es necesario seleccionar uno o mas cursos.");
         }
 
         #endregion

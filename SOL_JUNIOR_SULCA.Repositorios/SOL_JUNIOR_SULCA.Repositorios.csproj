@@ -55,7 +55,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Base\BaseRepositorio.cs" />
-    <Compile Include="Genericos\MatriculaSeccionRepositorio.cs" />
+    <Compile Include="Genericos\AlumnoRepositorio.cs" />
     <Compile Include="Genericos\SeccionRepositorio.cs" />
     <Compile Include="Genericos\MatriculaRepositorio.cs" />
     <Compile Include="Genericos\CursoRepositorio.cs" />

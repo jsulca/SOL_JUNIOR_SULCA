@@ -4,6 +4,7 @@ using SOL_JUNIOR_SULCA.Entidades.Genericos;
 using SOL_JUNIOR_SULCA.Repositorios.Base;
 using System.Collections.Generic;
 using System.Linq;
+using System.Data.Entity;
 
 namespace SOL_JUNIOR_SULCA.Repositorios
 {
@@ -11,21 +12,23 @@ namespace SOL_JUNIOR_SULCA.Repositorios
     {
         public MatriculaRepositorio(DataBaseContexto contexto) : base(contexto) { }
 
-        public List<Matricula> Listar(MatriculaFiltro filtro) => QueryListar(filtro).ToList();
+        public List<Matricula> Listar(MatriculaFiltro filtro) => QueryListar(filtro).OrderByDescending(x => x.Id).ToList();
 
         #region Metodos
 
         private IQueryable<Matricula> QueryListar(MatriculaFiltro filtro)
         {
-            IQueryable<Matricula> source = _contexto.Matricula.AsQueryable();
-
+            IQueryable<Matricula> source = _contexto.Matricula
+                                                    .Include(x => x.Alumno)
+                                                    .Include(x => x.Seccion)
+                                                    .Include(x => x.Seccion.Curso)
+                                                    .AsQueryable();
+            
             if (filtro != null)
             {
                 if (filtro.Estado.HasValue) source = source.Where(x => x.Estado == filtro.Estado);
-                if (!string.IsNullOrEmpty(filtro.Codigo)) source = source.Where(x => x.Codigo.Contains(filtro.Codigo));
-                if (!string.IsNullOrEmpty(filtro.Nombre)) source = source.Where(x => x.Nombre.Contains(filtro.Nombre));
-                if (!string.IsNullOrEmpty(filtro.Apellido)) source = source.Where(x => x.Apellido.Contains(filtro.Apellido));
-                if (!string.IsNullOrEmpty(filtro.NroDocumento)) source = source.Where(x => x.NroDocumento.Contains(filtro.NroDocumento));
+                if (filtro.AlumnoId.HasValue) source = source.Where(x => x.AlumnoId == filtro.AlumnoId);
+                if (filtro.SeccionId.HasValue) source = source.Where(x => x.SeccionId == filtro.SeccionId);
             }
 
             return source;

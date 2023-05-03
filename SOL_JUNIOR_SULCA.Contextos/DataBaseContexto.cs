@@ -1,6 +1,5 @@
 ﻿using SOL_JUNIOR_SULCA.Contextos.Configuraciones;
 using SOL_JUNIOR_SULCA.Entidades.Genericos;
-using System;
 using System.Data.Entity;
 
 namespace SOL_JUNIOR_SULCA.Contextos
@@ -10,7 +9,7 @@ namespace SOL_JUNIOR_SULCA.Contextos
         public DbSet<Matricula> Matricula { get; set; }
         public DbSet<Curso> Curso { get; set; }
         public DbSet<Seccion> Seccion { get; set; }
-        public DbSet<MatriculaSeccion> MatriculaSeccion { get; set; }
+        public DbSet<Alumno> Alumno { get; set; }
 
         public DataBaseContexto(): base("name=OracleConnection") { }
 
@@ -21,7 +20,7 @@ namespace SOL_JUNIOR_SULCA.Contextos
             CursoConfiguracion.Configure(modelBuilder.Entity<Curso>());
             MatriculaConfiguracion.Configure(modelBuilder.Entity<Matricula>());
             SeccionConfiguracion.Configure(modelBuilder.Entity<Seccion>());
-            MatriculaSeccionConfiguracion.Configure(modelBuilder.Entity<MatriculaSeccion>());
+            AlumnoConfiguracion.Configure(modelBuilder.Entity<Alumno>());
 
             base.OnModelCreating(modelBuilder);
         }

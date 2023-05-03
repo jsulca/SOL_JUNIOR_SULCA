@@ -54,7 +54,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Configuraciones\MatriculaSeccionConfiguracion.cs" />
+    <Compile Include="Configuraciones\AlumnoConfiguracion.cs" />
     <Compile Include="Configuraciones\SeccionConfiguracion.cs" />
     <Compile Include="Configuraciones\CursoConfiguracion.cs" />
     <Compile Include="Configuraciones\MatriculaConfiguracion.cs" />

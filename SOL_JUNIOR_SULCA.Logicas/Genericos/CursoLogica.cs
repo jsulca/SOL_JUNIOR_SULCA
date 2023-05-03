@@ -1,11 +1,7 @@
 ﻿using SOL_JUNIOR_SULCA.Contextos;
 using SOL_JUNIOR_SULCA.Entidades.Genericos;
 using SOL_JUNIOR_SULCA.Repositorios;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SOL_JUNIOR_SULCA.Logicas.Genericos
 {

@@ -41,13 +41,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Adicionales\Seccion.cs" />
+    <Compile Include="Constantes\EstadoAlumno.cs" />
     <Compile Include="Constantes\TipoMatricula.cs" />
     <Compile Include="Constantes\EstadoSeccion.cs" />
     <Compile Include="Constantes\EstadoMatricula.cs" />
-    <Compile Include="Filtros\MatriculaSeccionFiltro.cs" />
+    <Compile Include="Filtros\AlumnoFiltro.cs" />
     <Compile Include="Filtros\SeccionFiltro.cs" />
     <Compile Include="Filtros\MatriculaFiltro.cs" />
-    <Compile Include="Genericos\MatriculaSeccion.cs" />
+    <Compile Include="Genericos\Alumno.cs" />
     <Compile Include="Genericos\Seccion.cs" />
     <Compile Include="Genericos\Matricula.cs" />
     <Compile Include="Genericos\Curso.cs" />

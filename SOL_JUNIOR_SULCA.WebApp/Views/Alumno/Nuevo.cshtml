@@ -1,0 +1,81 @@
+﻿@model Alumno
+@{
+    ViewBag.Title = "Nuevo Alumno";
+
+}
+
+<h2>Nuevo Alumno</h2>
+
+<div class="row">
+    <div class="col-sm-6">
+        <label class="control-label">Nombres: <span class="text-danger">(*)</span></label>
+        @Html.TextBoxFor(m => m.Nombre, new { @class = "form-control" })
+    </div>
+    <div class="col-sm-6">
+        <label class="control-label">Apellidos: <span class="text-danger">(*)</span></label>
+        @Html.TextBoxFor(m => m.Apellido, new { @class = "form-control" })
+    </div>
+    <div class="col-sm-12 col-xs-12">
+        <label class="control-label">Estado: <span class="text-danger">(*)</span></label>
+        @Html.EnumDropDownListFor(m => m.Estado, new { @class = "form-control" })
+    </div>
+    <div class="col-sm-12 col-xs-12" id="mensajes"></div>
+</div>
+
+<hr />
+
+<div class="row">
+    <div class="col-md-12 text-center">
+        <button type="button" class="btn btn-success" id="btnGuardar">Guardar</button>
+        <a href="/Matricula/Index" class="btn btn-danger">Cancelar</a>
+    </div>
+</div>
+
+
+
+
+@section scripts {
+
+    <script>
+
+        var nuevo = {
+            ObtenerModelo: () => {
+                var model = {
+                    'nombre': $('#Nombre').val(),
+                    'apellido': $('#Apellido').val(),
+                    'estado': $('#Estado').val(),
+                }
+
+                return model
+            }
+        }
+
+        $(function () {
+            $('#btnGuardar').click(function () {
+                if (confirm('¿Esta seguro de guardar el registro?')) {
+                    var model = nuevo.ObtenerModelo()
+
+                    $.ajax({
+                        type: 'POST',
+                        url: '/Alumno/Nuevo',
+                        data: model,
+                        beforeSend: () => {
+                            $('#btnGuardar').attr('disabled', 'disabled')
+                            $('#mensajes').html('')
+                        },
+                        complete: () => {
+                            $('#btnGuardar').removeAttr('disabled')
+                        },
+                        success: ({ mensaje }) => {
+                            alert(mensaje)
+                            location.href = "/Alumno/Index";
+                        },
+                        error: (data) => {
+                            $('#mensajes').html(data.responseText)
+                        }
+                    })
+                }
+            })
+        })
+    </script>
+}

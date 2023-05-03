@@ -3,33 +3,35 @@
     ViewBag.Title = "Nueva Matricula";
 
     List<Seccion> secciones = ViewBag.Secciones;
+    List<Alumno> alumnos = ViewBag.Alumnos;
+
+    alumnos.ForEach(x => x.Nombre = $"{x.Apellido}, {x.Nombre}");
+    secciones.ForEach(x => x.Descripcion = $"[{x.Curso.Credito}] {x.Curso.Descripcion} - {x.Descripcion}");
+
+    var selectAlumnoId = new SelectList(alumnos, "Id", "Nombre");
+    var selectSeccionId = new SelectList(secciones, "Id", "Descripcion");
+
 }
 
 <h2>Nueva Matricula</h2>
 
 <div class="row">
-    <div class="col-sm-4 col-xs-12">
+
+    <div class="col-sm-6 col-xs-12">
+        <label class="control-label">Alumno:</label>
+        @Html.DropDownListFor(m => m.AlumnoId, selectAlumnoId, new { @class = "form-control" })
+    </div>
+
+    <div class="col-sm-6 col-xs-12">
+        <label class="control-label">Curso:</label>
+        @Html.DropDownListFor(m => m.SeccionId, selectSeccionId, new { @class = "form-control" })
+    </div>
+
+    <div class="col-sm-12 col-xs-12">
         <label class="control-label">Tipo de Matricula:</label>
         @Html.EnumDropDownListFor(m => m.Tipo, new { @class = "form-control" })
     </div>
-    <div class="col-sm-4 col-xs-6">
-        <label class="control-label">Codigo: <span class="text-danger">(*)</span></label>
-        @Html.TextBoxFor(m => m.Codigo, new { @class = "form-control" })
-    </div>
-    <div class="col-sm-4 col-xs-6">
-        <label class="control-label">Nro. Documento: <span class="text-danger">(*)</span></label>
-        @Html.TextBoxFor(m => m.NroDocumento, new { @class = "form-control" })
-    </div>
-    <div class="col-sm-6 col-xs-12">
-        <label class="control-label">Nombre: <span class="text-danger">(*)</span></label>
-        @Html.TextBoxFor(m => m.Nombre, new { @class = "form-control" })
-    </div>
-    <div class="col-sm-6 col-xs-12">
-        <label class="control-label">Apellido: <span class="text-danger">(*)</span></label>
-        @Html.TextBoxFor(m => m.Apellido, new { @class = "form-control" })
-    </div>
-
-    <div class="col-sm-12 col-xs-12" id="mensajes"></div>  
+    <div class="col-sm-12 col-xs-12" id="mensajes"></div>
 </div>
 
 <hr />
@@ -41,53 +43,18 @@
     </div>
 </div>
 
-<hr />
 
-<h2>Cursos</h2>
-<div class="row">
-    <div class="col-md-12">
-        <label class="control-label">Cursos: </label>
-        <div class="input-group">
-            <select class="form-control" id="Seccion">
-                @foreach (Seccion item in secciones)
-                {
-                    <option value="@item.Id" data-cursoid="@item.CursoId">[Creditos: @item.Curso.Credito] @item.Descripcion - @item.Curso.Descripcion</option>
-                }
-            </select>
-            <div class="input-group-btn">
-                <button type="button" class="btn btn-info" id="btnAgregarCurso">Agregar Curso</button>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-12">
-        <br />
-        <div class="table-responsive">
-            <table id="tblCursos" class="table table-bordered table-condensed table-hover">
-                <thead>
-                    <tr class="bg-info">
-                        <th width="100"></th>
-                        <th>CURSO</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
-        </div>
-    </div>
-</div>
 
 
 @section scripts {
 
     <script>
-
         var nuevo = {
             ObtenerModelo: () => {
                 var model = {
                     'tipo': $('#Tipo').val(),
-                    'codigo': $('#Codigo').val(),
-                    'nroDocumento': $('#NroDocumento').val(),
-                    'nombre': $('#Nombre').val(),
-                    'apellido': $('#Apellido').val(),
+                    'alumnoId': $('#AlumnoId').val(),
+                    'seccionId': $('#SeccionId').val(),
                 }
 
                 $.each($('#tblCursos tbody tr'), function (i, tr) {
